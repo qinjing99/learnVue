@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{magin:0;padding:0}
+        .bg{background:yellow}
+        #box{width:800px;margin:0 auto}
+        .List li{width:100%;background:#eee;position: relative}
+        .List p,.List input{display: inline-block}
+        .List span{position: absolute;right:20px;top:10px;}
+        .List .clmplete{background:red}
+        .editing p{display: none}
+        .List .edtiInput{display:none}
+        .editing .edtiInput{display: block;display: inline-block}
+    </style>
+    <script src="vue.js"></script>
+</head>
+<body >
+<div id="box">
+   <input @keyUp.enter="keyUp"  v-model="toDo" placeholder="输入回车即可添加"/>
+    <ol class="listInfo" v-show="list.length">
+        <li>一个任务未完成</li>
+        <li class="action">
+            <a class="active" href="javascript:;">全部任务</a>
+            <a class="active" href="javascript:;">未完成任务</a>
+            <a class="active" href="javascript:;">完成任务</a>
+        </li>
+    </ol>
+    <!--for循环取值；给input绑定model输入改变list数组push新的数据；
+        v-show 根据条件显示隐藏块
+        删除，传参数 index或者item=》获取索引this.list.indexOf(item)
+        点击input切换checkbox的checked属性，直接绑定v-model="true/false",在每条数据里面加一个参数，就可以
+        每条数据双击给li添加class变成编辑状态，即p标签隐藏出现input标签进行编辑
+    -->
+    <div class="List">
+        <h5 v-show="!list.length">您还没有添加数据</h5>
+        <ul>
+            <li  v-bind:class="{clmplete:item.isCheck,editing:item.edit}" v-for="(item,index) in list" >
+                <input type="checkbox"  v-model="item.isCheck" class="toggle"/> <!--input的checked属性直接用v-model来直接绑定属性，不用v-bind:checked="item.isCheck"，v-bind绑定之后点击时候不生效-->
+                <p v-on:dblclick="edit(index,$event)">{{item.title}}</p>
+                <input class="edtiInput" v-on:blur="editEnd(index,$event)" type="text" v-model="item.title" />
+                <span   v-on:click="deleted(item)">x</span> <!--传索引方法  v-on:click="deleted(index,$event)"-->
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+let iDate=[
+    { title:'11111',
+        isCheck:false,
+        edit:false
+    },
+    {title:'22222',
+        isCheck:true,
+        edit:false
+    }
+]
+var vm=new Vue({
+    el:"#box",
+    data:{     //数据改变dom绑定的值也会改变
+        list:iDate,
+        toDo:'' //写一个空值绑定在dom上，值一改变直接拿this.toDo就可的得到，就能不通过过去dom元素来获取了 ev.target.value
+    },
+    methods:{
+        keyUp(event){ //操作vue实例即操作数据的方法下载methods里面；参数怎么接受呢；在行间写，事件对象传的时候是$event,没有参数默认是event事件对象
+            if(event){
+                console.log(event.target.value);
+            }
+            // `this` 在方法里指当前 Vue 实例
+           this.list.push({    //通过数组方法改变数据,添加时候要把所有的key加上
+               title:this.toDo,
+               isCheck:false
+           });
+            this.toDo='';
+        },
+       /* deleted(index,ev){    //传索引
+            this.list.splice(index,1);
+        },*/
+        deleted(item){    //传当前值
+            var index=this.list.indexOf(item);  //当前索引的获取
+            this.list.splice(index,1);
+        },
+        edit(index,ev){
+            this.list[index].edit=true;
+        },
+        editEnd(index,ev){
+            this.list[index].edit=false;
+        }
+    }
+})
+//vm.keyUp();用js去执行方法
+</script>
+</body>
+</html>

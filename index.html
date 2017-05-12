@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .bg{background:yellow}
+    </style>
+    <script src="vue.js"></script>
+</head>
+<body >
+<div id="box">
+    <div v-on:click="clickH"  id="div">{{message}}</div>  <!--html模板-->
+    <input type="text" v-model='message'/>
+    <div v-bind:iId="isId" class="">{{mes}}</div>
+    <span v-text="mes"></span>
+    <input type="text" v-model="mes" />
+    <br/>
+    <br/>
+    <div v-html="rewHtml"></div>
+    <div v-if="isBtn">
+        hahaha
+    </div>
+    <div v-else="isBtn">
+        !!!!!
+    </div>
+
+    <ul >
+        <li v-for="(item,index) in items">{{index}}.{{message}},{{item.msg}}</li>
+        <li>iii</li>
+    </ul>
+
+    <ul >
+        <li v-for="item in obj">{{item}}</li>
+        <li v-for="(item,name,index) in obj">{{index}}. {{name}}:{{item}}</li>
+    </ul>
+
+    <br/>
+    <ul >
+        <template v-for="(item,index) in items">
+            <li>{{index}}.{{message}},{{item.msg}}</li>
+            <li>iii</li>
+        </template>
+    </ul>
+
+    <br/>
+    字符串模板：
+    <div id="box1"><span>aaaaa我是aa</span></div>
+
+    render模板：
+    <div id="box2"></div>
+
+</div>
+<script>
+
+   let data={
+        message:'hollo,vue!',
+        mes:'my name is vue',
+        isId:'123',
+        rewHtml:'<a href="http://www.baidu.com"></a>',
+        isBtn:false,
+        items:[
+            {msg:'111'},
+            {msg:'222'},
+            {msg:'333'},
+        ],
+       obj:{msg:'111',
+            da:'22',
+            id:'33'
+         }
+    }
+    var vue=new Vue({  //一个vue实例是可以，他可以包括所有的数据
+        el:'#box',
+        data:data,
+        methods:{
+            clickH:function(){
+             alert(11);
+             },
+        }
+    })
+
+   /*template字符串模板*/
+   let str=`<div class="bb">
+            <span>bbbbb我是bb</span>
+       </div>`
+    var vue1=new Vue({  //一个vue实例是可以，他可以包括所有的数据
+        el:'#box1',
+        template:str,
+    })
+
+   /*render方式加载模板*/
+   var vue2=new Vue({  //一个vue实例是可以，他可以包括所有的数据
+       el:'#box2',
+       render(createElement){   //render函数生成dom元素
+           return createElement(
+                   "ul",      //标签
+                   {          //标签身上的属性,json的形式
+                       class:{bg:true},
+                       style:{
+                           fontSize:'50px',
+                           background:'red'
+                       },
+                       attrs:{adc:'zz'}
+                   },
+                   [       //标签内容 数组的形式
+                       createElement('li',1),
+                       createElement('li',2),
+                       createElement('li',3),
+                   ]
+           )
+       }
+   })
+
+</script>
+</body>
+</html>
